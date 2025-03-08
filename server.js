@@ -1,26 +1,44 @@
-const express = require('express')
-const connectDB = require("./config/db")
-const cors = require('cors')
+const express = require("express");
+const connectDB = require("./config/db");
+const cors = require("cors");
 
-const app = express()
-//middlewares
-app.use(express.json())
-app.use(cors({ origin: "https://klefrontend.vercel.app/" }))
+const app = express();
 
-//mongodb database
+// Allowed frontend URLs
+const allowedOrigins = [
+  "https://klefrontend.vercel.app",
+  "https://klefrontend-an7i452tq-haribalajeeks-projects.vercel.app"
+];
 
-connectDB()
+// Middleware
+app.use(express.json());
+app.use(
+  cors({
+    origin: function (origin, callback) {
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
+    credentials: true, // Allows cookies and authentication headers if needed
+  })
+);
 
-app.use("/auth",require("./routes/authRoutes"))
-app.use("/cart",require("./routes/cartRoutes"))
+// Connect to MongoDB
+connectDB();
 
-//getting the server
-app.get('/',(req,res)=>{
-    res.send('getting the server')
-})
+// Routes
+app.use("/auth", require("./routes/authRoutes"));
+app.use("/cart", require("./routes/cartRoutes"));
 
-const port = 5000
+// Default route
+app.get("/", (req, res) => {
+  res.send("Server is running successfully!");
+});
 
+// Start server
+const port = 5000;
 app.listen(port, () => {
-    console.log(`Server running on port ${port}`)
-})
+  console.log(`Server running on port ${port}`);
+});
