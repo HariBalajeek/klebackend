@@ -5,7 +5,7 @@ const cors = require('cors')
 const app = express()
 //middlewares
 app.use(express.json())
-app.use(cors({ origin: "https://your-app.vercel.app" }))
+app.use(cors({ origin: "https://klefrontend.vercel.app/" }))
 
 //mongodb database
 
